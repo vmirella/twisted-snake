@@ -14,6 +14,44 @@ export default {
     isPlaying: Boolean,
     score: Number
   },
+  data () {
+    return {
+      directions: [
+        {
+          direction: 'left',
+          keyCode: 37,
+          move: {
+            x: -1,
+            y: 0
+          }
+        },        
+        {
+          direction: 'top',
+          keyCode: 38,
+          move: {
+            x: 0,
+            y: -1
+          }
+        },
+        {
+          direction: 'right',
+          keyCode: 39,
+          move: {
+            x: 1,
+            y: 0
+          }
+        },
+        {
+          direction: 'bottom',
+          keyCode: 40,
+          move: {
+            x: 0,
+            y: 1
+          }
+        }
+      ]
+    }
+  },
   created () {
     this.resetSnake()
   },
@@ -36,14 +74,40 @@ export default {
   },
   methods: {
     resetSnake () {
-      // this.snake = [{x: this.getMiddleCell(), y: this.getMiddleCell()}]
-
+      this.snake = [
+        {
+          x: this.getMiddleCell(), 
+          y: this.getMiddleCell()
+        }        
+      ]
+      this.direction = this.directions[0]
     },
     getMiddleCell () {
       return Math.round(this.countCells / 2)
     },
     move () {
-      
+      if (!this.isPlaying) {
+        return
+      }
+
+      this.clear()
+
+      const newHeadCell = {
+        x: this.snake[0].x + this.direction.move.x,
+        y: this.snake[0].y + this.direction.move.y
+      }
+
+      this.snake.unshift(newHeadCell)
+      this.snake.pop()
+
+      this.boardContext.beginPath()
+      this.snake.forEach(this.drawCell)
+      this.boardContext.closePath()
+
+      setTimeout(this.move, this.getMoveDelay())
+    },
+    clear () {
+      this.boardContext.clearRect(0, 0, this.boardSizePx, this.boardSizePx)
     },
     drawCell ({x, y}) {
       this.boardContext.rect(
@@ -54,9 +118,10 @@ export default {
       )
       this.boardContext.fillStyle = '#000'
       this.boardContext.fill()
+    },
+    getMoveDelay () {
+      return (2 / this.speed) * 1000
     }
-
-
   }
 
 }
