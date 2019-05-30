@@ -108,8 +108,13 @@ export default {
         this.stop()
       }
 
-      this.snake.unshift(newHeadCell)
-      this.snake.pop()
+      if (this.isTargetNewHead()) {
+        this.snake.unshift(this.targetCell)
+        this.targetCell = null
+      } else {
+        this.snake.unshift(newHeadCell)
+        this.snake.pop()
+      }      
 
       this.boardContext.beginPath()
       this.snake.forEach(this.drawCell)
@@ -181,6 +186,12 @@ export default {
     amountCellsInSnake (cell) {
       let snakeCell = this.snake.filter(({x, y}) => x === cell.x && y === cell.y)
       return snakeCell.length
+    },
+    isTargetNewHead () {
+      return (
+        this.snake[0].x + this.direction.move.x === this.targetCell.x &&
+        this.snake[0].y + this.direction.move.y === this.targetCell.y
+      )
     }
   }
 
