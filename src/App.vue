@@ -1,9 +1,16 @@
 <template>
   <div id="app">
     <h1>Twisted Snake</h1>
-    <SnakeCanvas></SnakeCanvas>
+    <SnakeCanvas
+      :cellSize="cellSize"
+      :countCells="countCells"
+      :speed="speed"
+      :isPlaying="isPlaying"
+      :score="score"
+    >
+    </SnakeCanvas>
     <div class="div-button">
-      <button>Play</button>
+      <button v-on:click="isPlaying ? stop() : start()">{{isPlaying ? "Stop" : "Play"}}</button>
     </div>
     
   </div>
@@ -16,6 +23,23 @@ export default {
   name: 'app',
   components: {
     SnakeCanvas
+  },
+  data () {
+    return {
+      cellSize: 30,
+      countCells: 16,
+      speed: 10,
+      isPlaying: false,
+      score: 0
+    }
+  },
+  methods: {
+    start () {
+      this.isPlaying = true
+    },
+    stop () {
+      this.isPlaying = false
+    }
   }
 }
 </script>
@@ -32,6 +56,6 @@ export default {
     align-items: center;
   }
   .div-button {
-    
+
   }
 </style>

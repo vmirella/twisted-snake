@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="board" class="snake-canvas" :width="`${boardSizePx}`" :height="`${boardSizePx}`">
+  <canvas ref="board" class="snake-canvas" :width="boardSizePx" :height="boardSizePx">
 
   </canvas>
 </template>
@@ -7,17 +7,27 @@
 <script>
 export default {
   name: 'SnakeCanvas',
-  data () {
-    return {
-      cellSize: 30,
-      countCells: 16,
-      speed: 10,
-      isPlaying: false,
-      score: 0
+  props: {
+    cellSize: Number,
+    countCells: Number,
+    speed: Number,
+    isPlaying: Boolean,
+    score: Number
+  },
+  created () {
+    this.resetSnake()
+  },
+  watch: {
+    isPlaying(value) {
+      console.log(value)
+      if (value) {
+        this.resetSnake()
+        this.move()
+      }
     }
   },
   mounted () {
-    
+    this.boardContext = this.$refs.board.getContext('2d')
   },
   computed: {
     boardSizePx () {
@@ -26,15 +36,27 @@ export default {
   },
   methods: {
     resetSnake () {
-      this.snake = [{x: this.getMiddleCell(), y: this.getMiddleCell()}]
+      // this.snake = [{x: this.getMiddleCell(), y: this.getMiddleCell()}]
 
     },
     getMiddleCell () {
       return Math.round(this.countCells / 2)
     },
     move () {
-
+      
+    },
+    drawCell ({x, y}) {
+      this.boardContext.rect(
+        x * this.cellSize,
+        y * this.cellSize,
+        this.cellSize,
+        this.cellSize
+      )
+      this.boardContext.fillStyle = '#000'
+      this.boardContext.fill()
     }
+
+
   }
 
 }
