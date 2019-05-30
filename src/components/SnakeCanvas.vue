@@ -12,7 +12,8 @@ export default {
     countCells: Number,
     speed: Number,
     isPlaying: Boolean,
-    score: Number
+    score: Number,
+    stop: Function
   },
   data () {
     return {
@@ -97,8 +98,12 @@ export default {
         y: this.snake[0].y + this.direction.move.y
       }
 
-      this.snake.unshift(newHeadCell)
-      this.snake.pop()
+      if (this.isCellOutOfBoard(newHeadCell)) {
+        this.stop()
+      } else {
+        this.snake.unshift(newHeadCell)
+        this.snake.pop()
+      }     
 
       this.boardContext.beginPath()
       this.snake.forEach(this.drawCell)
@@ -121,6 +126,10 @@ export default {
     },
     getMoveDelay () {
       return (2 / this.speed) * 1000
+    },
+    isCellOutOfBoard ({x, y}) {
+      //Si la serpiente se sale del tablero retorna true
+      return x < 0 || y < 0 || x >= this.countCells || y >= this.countCells
     }
   }
 

@@ -7,6 +7,7 @@
       :speed="speed"
       :isPlaying="isPlaying"
       :score="score"
+      :stop="stop"
     >
     </SnakeCanvas>
     <div class="div-button">
