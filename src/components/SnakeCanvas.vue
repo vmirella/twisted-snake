@@ -135,7 +135,7 @@ export default {
       //Si la serpiente se sale del tablero retorna true
       return x < 0 || y < 0 || x >= this.countCells || y >= this.countCells
     },
-    onKeyPress(event) {      
+    onKeyPress (event) {      
       const newDirection = this.directions.find(item => item.keyCode === event.keyCode)
 
       if (!newDirection) {
@@ -145,6 +145,17 @@ export default {
       //Validando que la serpiente no pueda girar hacia el lado opuesto
       if (Math.abs(newDirection.keyCode - this.direction.keyCode) !== 2) {
         this.direction = newDirection
+      }
+    },
+    setTargetCell () {
+      if (!this.targetCell) {
+        const targetCell = this.getRandomCell()
+      }
+    },
+    getRandomCell () {
+      return {
+        x: Math.floor(Math.random() * this.countCells),
+        y: Math.floor(Math.random() * this.countCells)
       }
     }
   }
