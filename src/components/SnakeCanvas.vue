@@ -67,6 +67,10 @@ export default {
   },
   mounted () {
     this.boardContext = this.$refs.board.getContext('2d')
+    window.addEventListener('keydown', this.onKeyPress) 
+  },
+  beforeDestroy () {
+    window.removeEventListener('keydown', this.onKeyPress) 
   },
   computed: {
     boardSizePx () {
@@ -100,10 +104,10 @@ export default {
 
       if (this.isCellOutOfBoard(newHeadCell)) {
         this.stop()
-      } else {
-        this.snake.unshift(newHeadCell)
-        this.snake.pop()
-      }     
+      }
+
+      this.snake.unshift(newHeadCell)
+      this.snake.pop()
 
       this.boardContext.beginPath()
       this.snake.forEach(this.drawCell)
@@ -130,6 +134,18 @@ export default {
     isCellOutOfBoard ({x, y}) {
       //Si la serpiente se sale del tablero retorna true
       return x < 0 || y < 0 || x >= this.countCells || y >= this.countCells
+    },
+    onKeyPress(event) {      
+      const newDirection = this.directions.find(item => item.keyCode === event.keyCode)
+
+      if (!newDirection) {
+        return 
+      }
+
+      //Validando que la serpiente no pueda girar hacia el lado opuesto
+      if (Math.abs(newDirection.keyCode - this.direction.keyCode) !== 2) {
+        this.direction = newDirection
+      }
     }
   }
 
