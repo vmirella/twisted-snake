@@ -29,7 +29,7 @@ export default {
     return {
       cellSize: 30,
       countCells: 16,
-      speed: 10,
+      speed: 5,
       isPlaying: false,
       score: 0
     }

@@ -97,6 +97,8 @@ export default {
 
       this.clear()
 
+      this.setTargetCell()
+
       const newHeadCell = {
         x: this.snake[0].x + this.direction.move.x,
         y: this.snake[0].y + this.direction.move.y
@@ -150,13 +152,35 @@ export default {
     setTargetCell () {
       if (!this.targetCell) {
         const targetCell = this.getRandomCell()
+        //Si en la posición de la fruta hay serpiente, asigna nueva posición
+        while (this.amountCellsInSnake(targetCell) > 0) {
+          targetCell = this.getRandomCell()
+        }
+        this.targetCell = targetCell
       }
+
+      //Dibujar la fruta en la posición obtenda al azar
+      this.boardContext.beginPath()
+      this.boardContext.rect(
+        this.targetCell.x * this.cellSize,
+        this.targetCell.y * this.cellSize,
+        this.cellSize,
+        this.cellSize
+      )
+      this.boardContext.fillStyle = '#ff0000'
+      this.boardContext.fill()
+      this.boardContext.closePath()
     },
     getRandomCell () {
       return {
         x: Math.floor(Math.random() * this.countCells),
         y: Math.floor(Math.random() * this.countCells)
       }
+    },
+    //Verifica si en la celda que recibe hay o no serpiente (0:No hay, > 0: Si hay)
+    amountCellsInSnake (cell) {
+      let snakeCell = this.snake.filter(({x, y}) => x === cell.x && y === cell.y)
+      return snakeCell.length
     }
   }
 
