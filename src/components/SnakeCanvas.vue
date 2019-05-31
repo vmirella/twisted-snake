@@ -87,7 +87,8 @@ export default {
           y: this.getMiddleCell()
         }        
       ]
-      this.direction = this.directions[0]
+      const randomDirection = Math.floor(Math.random() * 4)
+      this.direction = this.directions[randomDirection]
     },
     getMiddleCell () {
       return Math.round(this.countCells / 2)
@@ -106,8 +107,9 @@ export default {
         y: this.snake[0].y + this.direction.move.y
       }
 
-      if (this.isCellOutOfBoard(newHeadCell)) {
+      if (this.isCellOutOfBoard(newHeadCell) || this.amountCellsInSnake(this.snake[0]) > 1) {
         this.stop()
+        alert(`Game over! you have scored ${this.score} points`)
       }
 
       if (this.isTargetNewHead()) {
