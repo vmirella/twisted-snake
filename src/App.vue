@@ -1,6 +1,10 @@
 <template>
   <div id="app">
     <h1>Twisted Snake</h1>
+    <h3>Score: {{score}}</h3>
+    <div class="div-button">
+      <button v-on:click="isPlaying ? stop() : start()">{{isPlaying ? "Stop" : "Play"}}</button>
+    </div>
     <SnakeCanvas
       :cellSize="cellSize"
       :countCells="countCells"
@@ -8,11 +12,11 @@
       :isPlaying="isPlaying"
       :score="score"
       :stop="stop"
+      :addScore="addScore"
+      :points="points"
     >
     </SnakeCanvas>
-    <div class="div-button">
-      <button v-on:click="isPlaying ? stop() : start()">{{isPlaying ? "Stop" : "Play"}}</button>
-    </div>
+    
     
   </div>
 </template>
@@ -31,15 +35,20 @@ export default {
       countCells: 16,
       speed: 5,
       isPlaying: false,
-      score: 0
+      score: 0,
+      points: 1
     }
   },
   methods: {
     start () {
       this.isPlaying = true
+      this.score = 0
     },
     stop () {
       this.isPlaying = false
+    },
+    addScore (score) {
+      this.score += score
     }
   }
 }

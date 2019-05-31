@@ -13,7 +13,9 @@ export default {
     speed: Number,
     isPlaying: Boolean,
     score: Number,
-    stop: Function
+    stop: Function,
+    addScore: Function,
+    points: Number
   },
   data () {
     return {
@@ -111,6 +113,7 @@ export default {
       if (this.isTargetNewHead()) {
         this.snake.unshift(this.targetCell)
         this.targetCell = null
+        this.addScore(this.points)
       } else {
         this.snake.unshift(newHeadCell)
         this.snake.pop()
