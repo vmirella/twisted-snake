@@ -1,10 +1,11 @@
 <template>
-  <canvas ref="board" class="snake-canvas" :width="boardSizePx" :height="boardSizePx">
-
-  </canvas>
+  <canvas ref="board" class="snake-canvas" :width="boardSizePx" :height="boardSizePx"></canvas>
 </template>
 
 <script>
+
+import foodImage from '../assets/food.png'
+
 export default {
   name: 'SnakeCanvas',
   props: {
@@ -19,6 +20,8 @@ export default {
   },
   data () {
     return {
+      head: null,
+      food: null,
       directions: [
         {
           direction: 'left',
@@ -56,6 +59,12 @@ export default {
     }
   },
   created () {
+    const food = new window.Image()
+    food.src = foodImage
+    food.onload = () => {
+      this.food = food
+    }
+
     this.resetSnake()
   },
   watch: {
@@ -91,7 +100,7 @@ export default {
       this.direction = this.directions[randomDirection]
     },
     getInitCell () {
-      return Math.floor(Math.random() * ((this.countCells - 3) - 4)) + 4
+      return Math.floor(Math.random() * ((this.countCells - 3) - 3)) + 3
     },
     move () {
       if (!this.isPlaying) {
@@ -137,7 +146,7 @@ export default {
         this.cellSize,
         this.cellSize
       )
-      this.boardContext.fillStyle = '#000'
+      this.boardContext.fillStyle = '#9F7267'
       this.boardContext.fill()
     },
     getMoveDelay () {
@@ -171,14 +180,22 @@ export default {
 
       //Dibujar la fruta en la posición obtenda al azar
       this.boardContext.beginPath()
-      this.boardContext.rect(
+      // this.boardContext.rect(
+      //   this.targetCell.x * this.cellSize,
+      //   this.targetCell.y * this.cellSize,
+      //   this.cellSize,
+      //   this.cellSize
+      // )
+      // this.boardContext.fillStyle = '#ff0000'
+      // this.boardContext.fill()
+      this.boardContext.drawImage(
+        this.food, 
         this.targetCell.x * this.cellSize,
         this.targetCell.y * this.cellSize,
         this.cellSize,
         this.cellSize
-      )
-      this.boardContext.fillStyle = '#ff0000'
-      this.boardContext.fill()
+      )     
+      
       this.boardContext.closePath()
     },
     getRandomCell () {
