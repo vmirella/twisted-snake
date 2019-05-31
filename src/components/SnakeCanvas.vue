@@ -5,6 +5,7 @@
 <script>
 
 import foodImage from '../assets/food.png'
+import headImage from '../assets/zoo.png'
 
 export default {
   name: 'SnakeCanvas',
@@ -63,6 +64,12 @@ export default {
     food.src = foodImage
     food.onload = () => {
       this.food = food
+    }
+
+    const head = new window.Image()
+    head.src = headImage
+    head.onload = () => {
+      this.head = head
     }
 
     this.resetSnake()
@@ -131,7 +138,14 @@ export default {
       }      
 
       this.boardContext.beginPath()
-      this.snake.forEach(this.drawCell)
+      //this.snake.forEach(this.drawCell)
+      this.snake.forEach((item, index) => {
+        if (index === 0) {
+          this.drawHead(item)
+        } else {
+          this.drawCell(item)
+        }
+      });
       this.boardContext.closePath()
 
       setTimeout(this.move, this.getMoveDelay())
@@ -139,7 +153,8 @@ export default {
     clear () {
       this.boardContext.clearRect(0, 0, this.boardSizePx, this.boardSizePx)
     },
-    drawCell ({x, y}) {
+    drawCell ({x, y}) {  
+
       this.boardContext.rect(
         x * this.cellSize,
         y * this.cellSize,
@@ -148,6 +163,16 @@ export default {
       )
       this.boardContext.fillStyle = '#9F7267'
       this.boardContext.fill()
+    },
+    drawHead ({x, y}) {
+
+      this.boardContext.drawImage(
+        this.head, 
+        x * this.cellSize,
+        y * this.cellSize,
+        this.cellSize,
+        this.cellSize
+      )   
     },
     getMoveDelay () {
       return (2 / this.speed) * 1000
@@ -180,14 +205,6 @@ export default {
 
       //Dibujar la fruta en la posición obtenda al azar
       this.boardContext.beginPath()
-      // this.boardContext.rect(
-      //   this.targetCell.x * this.cellSize,
-      //   this.targetCell.y * this.cellSize,
-      //   this.cellSize,
-      //   this.cellSize
-      // )
-      // this.boardContext.fillStyle = '#ff0000'
-      // this.boardContext.fill()
       this.boardContext.drawImage(
         this.food, 
         this.targetCell.x * this.cellSize,
