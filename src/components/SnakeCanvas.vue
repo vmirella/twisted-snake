@@ -83,15 +83,15 @@ export default {
     resetSnake () {
       this.snake = [
         {
-          x: this.getMiddleCell(), 
-          y: this.getMiddleCell()
+          x: this.getInitCell(), 
+          y: this.getInitCell()
         }        
       ]
       const randomDirection = Math.floor(Math.random() * 4)
       this.direction = this.directions[randomDirection]
     },
-    getMiddleCell () {
-      return Math.round(this.countCells / 2)
+    getInitCell () {
+      return Math.floor(Math.random() * ((this.countCells - 3) - 4)) + 4
     },
     move () {
       if (!this.isPlaying) {
