@@ -97,14 +97,28 @@ export default {
   },
   methods: {
     resetSnake () {
+      
+      // const randomDirection = Math.floor(Math.random() * 4)
+      // this.direction = this.directions[randomDirection]
+      //Comienza en dirección fija para poder controlar la dirección del cuerpo
+      this.direction = this.directions[0] 
+
+      const posX = this.getInitCell()
+      const posY = this.getInitCell()
       this.snake = [
         {
-          x: this.getInitCell(), 
-          y: this.getInitCell()
-        }        
+          x: posX, 
+          y: posY
+        },
+        {
+          x: posX + 1, 
+          y: posY
+        },
+        {
+          x: posX + 2, 
+          y: posY
+        } 
       ]
-      const randomDirection = Math.floor(Math.random() * 4)
-      this.direction = this.directions[randomDirection]
     },
     getInitCell () {
       return Math.floor(Math.random() * ((this.countCells - 3) - 3)) + 3
@@ -125,7 +139,7 @@ export default {
 
       if (this.isCellOutOfBoard(newHeadCell) || this.amountCellsInSnake(this.snake[0]) > 1) {
         this.stop()
-        alert(`Game over! you have scored ${this.score} points`)
+        //alert(`Game over! you have scored ${this.score} points`)
       }
 
       if (this.isTargetNewHead()) {
@@ -155,11 +169,20 @@ export default {
     },
     drawCell ({x, y}) {  
 
-      this.boardContext.rect(
-        x * this.cellSize,
-        y * this.cellSize,
-        this.cellSize,
-        this.cellSize
+      let centerX = (x * this.cellSize) + Math.round(this.cellSize / 2)
+      let centerY = (y * this.cellSize) + Math.round(this.cellSize / 2)
+      let radius = Math.round(this.cellSize / 2)
+
+      //Colocar nuevamente beginPath para evitar el bug de los círculos mal dibujados
+      this.boardContext.beginPath()
+      
+      this.boardContext.arc(
+        centerX,
+        centerY,
+        radius,
+        0,
+        (Math.PI / 180) * 360,
+        true
       )
       this.boardContext.fillStyle = '#9F7267'
       this.boardContext.fill()
@@ -195,7 +218,7 @@ export default {
     },
     setTargetCell () {
       if (!this.targetCell) {
-        const targetCell = this.getRandomCell()
+        let targetCell = this.getRandomCell()
         //Si en la posición de la fruta hay serpiente, asigna nueva posición
         while (this.amountCellsInSnake(targetCell) > 0) {
           targetCell = this.getRandomCell()
