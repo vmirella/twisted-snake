@@ -26,7 +26,7 @@ export default {
       directions: [
         {
           direction: 'left',
-          keyCode: 37,
+          keyCode: 39,
           move: {
             x: -1,
             y: 0
@@ -34,7 +34,7 @@ export default {
         },        
         {
           direction: 'top',
-          keyCode: 38,
+          keyCode: 40,
           move: {
             x: 0,
             y: -1
@@ -42,7 +42,7 @@ export default {
         },
         {
           direction: 'right',
-          keyCode: 39,
+          keyCode: 37,
           move: {
             x: 1,
             y: 0
@@ -50,7 +50,7 @@ export default {
         },
         {
           direction: 'bottom',
-          keyCode: 40,
+          keyCode: 38,
           move: {
             x: 0,
             y: 1
