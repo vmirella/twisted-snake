@@ -1,9 +1,9 @@
 <template>
-  <div id="app"> 
+  <div class="app"> 
     <h1>Twisted Snake</h1>
     <h3>Score: {{score}}</h3>
     <div class="div-button">
-      <button v-on:click="isPlaying ? stop() : start()">{{isPlaying ? "Stop" : "Play"}}</button>
+      <button v-on:click="isPlaying ? stop() : start()" v-bind:class="isPlaying ? 'red' : 'green'">{{isPlaying ? "Stop" : "Play"}}</button>
     </div>
 
     <div class="score">
@@ -27,7 +27,7 @@
       </SnakeCanvas>
     </div>
     
-    
+    <div class="clear"></div>
     
   </div>
 </template>
@@ -70,25 +70,37 @@ export default {
 </script>
 
 <style>
-  #app {
+  body {
+    background-color: #C4ADF0;
+  }
+  .app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: #1D33AB;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 850px;
+    margin: 0 auto;    
   }
   .score, .board {
     float: left;
   }
   .score {
-    width: 20%;
+    width: 25%;
     text-align: left;
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding: 5px;
+    height: 480px;
+    background-color: #6D7ECC;
+    overflow-y: auto;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(91,109,205,1);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(91,109,205,1);
+    box-shadow: 10px 10px 5px 0px rgba(91,109,205,1);
   }
   .board {
-    width: 80%;
+    width: 75%;   
   }
   .div-button {
     margin-bottom: 20px;
@@ -99,5 +111,17 @@ export default {
     cursor: pointer;
     padding: 5px 20px;
     border-radius: 5px;
+    color: #fafafa;
+  }
+
+  button.red {
+    background-color: #F90C0C;
+  }
+
+  button.green {
+    background-color:#31D331;
+  }
+  .clear {
+    clear: both;
   }
 </style>

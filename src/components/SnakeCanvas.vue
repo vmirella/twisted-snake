@@ -139,7 +139,8 @@ export default {
 
       if (this.isCellOutOfBoard(newHeadCell) || this.amountCellsInSnake(this.snake[0]) > 1) {
         this.stop()
-        //alert(`Game over! you have scored ${this.score} points`)
+        this.drawMessage()
+        return 
       }
 
       if (this.isTargetNewHead()) {
@@ -254,6 +255,26 @@ export default {
         this.snake[0].x + this.direction.move.x === this.targetCell.x &&
         this.snake[0].y + this.direction.move.y === this.targetCell.y
       )
+    },
+    drawMessage (message) {
+      const centerBoard = Math.floor(this.boardSizePx / 2)
+
+      this.boardContext.beginPath()
+      this.boardContext.fillStyle = '#AFB9F0'
+      this.boardContext.rect(
+        60,
+        180,
+        360,
+        90
+      )
+      this.boardContext.fill()
+
+      this.boardContext.beginPath()
+      this.boardContext.font = '30px Helvetica'
+      this.boardContext.textAlign = 'center'
+      this.boardContext.fillStyle = '#fafafa'
+      this.boardContext.fillText('Game over!', centerBoard, (centerBoard - 15))
+      this.boardContext.fillText(`You have scored ${this.score} points`, centerBoard, (centerBoard + 15))
     }
   }
 
@@ -263,6 +284,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .snake-canvas {
-    border: 1px solid #000;
+    border: 5px solid #5B6DCD;
+    border-radius: 5px;
+    background-image: url('../assets/tablero.jpg')
   }
 </style>

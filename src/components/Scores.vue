@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>Scores:</h2>
+    <h2>Scores</h2>
     <ul>
-      <li v-for="(score, index) in orderedScores" v-bind:key="index">Score {{index + 1}}: {{score}} points</li>
+      <li v-for="(score, index) in orderedScores" v-bind:key="index"><span>Score {{index + 1}}:</span> {{score}} points</li>
     </ul>
   </div>  
 </template>
@@ -22,8 +22,16 @@ export default {
 </script>
 
 <style scoped>
+  h2 {
+    text-align: center;
+    color: #fff;
+  }
   ul {
     padding-left: 20px;
+    color: #fff;
+  }
+  ul li span {
+    font-weight: bold;
   }
 </style>
 
