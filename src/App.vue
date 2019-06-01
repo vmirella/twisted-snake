@@ -1,8 +1,17 @@
 <template>
   <div class="app"> 
     <h1>Twisted Snake</h1>
+
     <h3>Score: {{score}}</h3>
-    <div class="div-button">
+
+    <span class="select-text">Select mode: </span>
+    <select v-model="speed" class="select-speed">
+      <option v-for="option in options" v-bind:value="option.value" v-bind:key="option.value"> 
+        {{ option.text }}
+      </option>
+    </select>
+
+    <div class="div-button">      
       <button v-on:click="isPlaying ? stop() : start()" v-bind:class="isPlaying ? 'red' : 'green'">{{isPlaying ? "Stop" : "Play"}}</button>
     </div>
 
@@ -46,11 +55,16 @@ export default {
     return {
       cellSize: 30,
       countCells: 16,
-      speed: 5,
+      speed: 8,
       isPlaying: false,
       score: 0,
       points: 1,
-      scores: []
+      scores: [],
+      options: [
+        { text: 'Easy', value: 4 },
+        { text: 'Normal', value: 8 },
+        { text: 'Hard', value: 12 }
+      ]
     }
   },
   methods: {
@@ -120,6 +134,15 @@ export default {
 
   button.green {
     background-color:#31D331;
+  }
+  .select-speed {
+    font-size: 25px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  .select-text {
+    font-size: 25px;
+    margin-right: 5px;
   }
   .clear {
     clear: both;
