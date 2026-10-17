@@ -14,8 +14,8 @@ export default {
     scores: Array
   },
   computed: {
-    orderedScores: function () {
-      return this.scores.sort((a, b) => {return b - a})
+    orderedScores () {
+      return [...(this.scores || [])].sort((a, b) => b - a)
     }
   }
 }

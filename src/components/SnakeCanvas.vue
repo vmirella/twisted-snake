@@ -76,7 +76,6 @@ export default {
   },
   watch: {
     isPlaying(value) {
-      console.log(value)
       if (value) {
         this.resetSnake()
         this.move()
@@ -85,10 +84,10 @@ export default {
   },
   mounted () {
     this.boardContext = this.$refs.board.getContext('2d')
-    window.addEventListener('keydown', this.onKeyPress) 
+    window.addEventListener('keydown', this.onKeyPress)
   },
-  beforeDestroy () {
-    window.removeEventListener('keydown', this.onKeyPress) 
+  beforeUnmount () {
+    window.removeEventListener('keydown', this.onKeyPress)
   },
   computed: {
     boardSizePx () {
@@ -256,7 +255,7 @@ export default {
         this.snake[0].y + this.direction.move.y === this.targetCell.y
       )
     },
-    drawMessage (message) {
+    drawMessage () {
       const centerBoard = Math.floor(this.boardSizePx / 2)
 
       this.boardContext.beginPath()
