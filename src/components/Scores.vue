@@ -2,37 +2,47 @@
   <div>
     <h2>Scores</h2>
     <ul>
-      <li v-for="(score, index) in orderedScores" v-bind:key="index"><span>Score {{index + 1}}:</span> {{score}} points</li>
+      <li v-for="(score, index) in orderedScores" v-bind:key="index">
+        <span>Score {{ index + 1 }}:</span> {{ score }} points
+      </li>
     </ul>
-  </div>  
+  </div>
 </template>
 
 <script>
 export default {
-  name:'Scores',
+  name: "Scores",
   props: {
-    scores: Array
+    scores: Array,
   },
   computed: {
-    orderedScores () {
-      return [...(this.scores || [])].sort((a, b) => b - a)
-    }
-  }
-}
+    orderedScores() {
+      return [...(this.scores || [])].sort((a, b) => b - a);
+    },
+  },
+};
 </script>
 
 <style scoped>
-  h2 {
-    text-align: center;
-    color: #fff;
-  }
-  ul {
-    padding-left: 20px;
-    color: #fff;
-  }
-  ul li span {
-    font-weight: bold;
-  }
+h2 {
+  margin: 0 0 12px;
+  color: #315c38;
+  font-size: 1.1rem;
+}
+
+ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: #315c38;
+}
+
+ul li {
+  overflow-wrap: anywhere;
+}
+
+ul li span {
+  font-weight: 700;
+}
 </style>
-
-
