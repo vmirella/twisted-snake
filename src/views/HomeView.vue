@@ -42,7 +42,10 @@
         <div v-if="showInstructions" class="instructions-panel">
           <h2>¿Cómo jugar?</h2>
           <ul>
-            <li>Usa las flechas del teclado para mover a la ardilla.</li>
+            <li>En ordenador, usa las flechas del teclado.</li>
+            <li>
+              En móvil, utiliza los botones de dirección debajo del tablero.
+            </li>
             <li>Recoge las bellotas para sumar puntos.</li>
             <li>Evita chocar para continuar tu aventura.</li>
           </ul>
@@ -95,7 +98,7 @@
         <span class="feature-icon yellow-icon" aria-hidden="true">🎮</span>
         <div>
           <h2>Controles sencillos</h2>
-          <p>Muévete con las flechas del teclado.</p>
+          <p>Juega con el teclado o con los controles táctiles.</p>
         </div>
       </article>
 

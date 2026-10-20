@@ -2,55 +2,49 @@
   <main class="game-app">
     <header class="game-header">
       <RouterLink to="/" class="back-link" aria-label="Volver al inicio">
-        <span class="back-icon" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg>
-        </span>
+        <span aria-hidden="true">←</span>
         <span>Inicio</span>
       </RouterLink>
-
-      <div class="game-title">
-        <span class="eyebrow">AVENTURA EN EL BOSQUE</span>
-        <h1>¡A recoger bellotas!</h1>
-        <p>Muévete por el tablero y evita chocar.</p>
-      </div>
-
-      <div class="header-info">
-        <span class="status-pill">
-          {{ isPlaying ? "En partida" : "Preparado" }}
-        </span>
-
-        <div class="score-badge" aria-live="polite">
-          <span>Puntuación</span>
-          <strong>{{ score }}</strong>
-        </div>
-      </div>
+      <p class="game-brand">
+        <span aria-hidden="true">🌰</span> Ardilla y Bellota
+      </p>
     </header>
 
     <section class="game-layout">
       <div class="board-card">
-        <div class="game-actions">
-          <button
-            class="primary-button"
-            :class="{ 'stop-button': isPlaying }"
-            @click="isPlaying ? stop() : start()"
-          >
-            <span aria-hidden="true">{{ isPlaying ? "■" : "🎮" }}</span>
-            {{ isPlaying ? "Terminar partida" : "¡A jugar!" }}
-          </button>
+        <div class="board-heading">
+          <div>
+            <p class="eyebrow">AVENTURA EN EL BOSQUE</p>
+            <h1>¡A recoger bellotas!</h1>
+            <p>Recoge bellotas y evita chocar.</p>
+          </div>
+          <span class="status-pill" :class="{ 'status-playing': isPlaying }">
+            {{
+              isPlaying
+                ? "En partida"
+                : gameOver
+                  ? "Partida terminada"
+                  : "Preparado"
+            }}
+          </span>
+        </div>
 
+        <div class="game-stats" aria-live="polite">
+          <div class="stat-card current-stat">
+            <span class="stat-label"
+              ><span aria-hidden="true">🌰</span> Puntuación</span
+            >
+            <strong>{{ score }}</strong>
+          </div>
+          <div class="stat-card record-stat">
+            <span class="stat-label"
+              ><span aria-hidden="true">🏆</span> Mejor partida</span
+            >
+            <strong>{{ bestScore }}</strong>
+          </div>
+        </div>
+
+        <div class="difficulty-row">
           <label class="difficulty-control">
             <span>Dificultad</span>
             <select v-model.number="speed" :disabled="isPlaying">
@@ -76,17 +70,58 @@
             :addScore="addScore"
             :points="points"
           />
+
+          <div
+            v-if="gameOver"
+            class="result-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="result-title"
+          >
+            <div class="result-card">
+              <div class="sad-squirrel" aria-hidden="true">
+                <img :src="squirrelSprite" alt="" />
+                <span class="sad-tear">💧</span>
+              </div>
+
+              <p class="result-eyebrow">FIN DE LA AVENTURA</p>
+              <h2 id="result-title">¡Oh, no! ¡Has chocado!</h2>
+              <p class="result-description">
+                No te preocupes, puedes intentarlo otra vez.
+              </p>
+
+              <div class="result-stats">
+                <div class="result-stat">
+                  <span><span aria-hidden="true">🌰</span> Tu puntuación</span>
+                  <strong>{{ score }}</strong>
+                </div>
+                <div class="result-stat">
+                  <span><span aria-hidden="true">🏆</span> Mejor partida</span>
+                  <strong>{{ bestScore }}</strong>
+                </div>
+              </div>
+
+              <div class="result-actions">
+                <button class="primary-button" type="button" @click="start">
+                  <span aria-hidden="true">↻</span> Jugar de nuevo
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <p class="keyboard-hint">Usa las flechas del teclado para moverte.</p>
+        <p class="keyboard-hint">
+          <span aria-hidden="true">🎮</span>
+          Usa las flechas o los controles de dirección para moverte.
+        </p>
       </div>
 
-      <aside class="scores-card">
+      <aside ref="recordsSection" class="scores-card" tabindex="-1">
         <div class="scores-heading">
           <span class="scores-icon" aria-hidden="true">🏆</span>
           <div>
-            <h2>Mejores partidas</h2>
-            <p>Tu progreso en el bosque</p>
+            <h2>Tabla de récords</h2>
+            <p>Tus mejores partidas</p>
           </div>
         </div>
 
@@ -94,7 +129,7 @@
 
         <div class="tip-card">
           <span aria-hidden="true">💡</span>
-          <p>¡Recoge las bellotas y consigue la puntuación más alta!</p>
+          <p>¡Recoge las bellotas y supera tu mejor puntuación!</p>
         </div>
       </aside>
     </section>
@@ -108,6 +143,10 @@
 <script>
 import SnakeCanvas from "../components/SnakeCanvas.vue";
 import ScoresBoard from "../components/Scores.vue";
+import squirrelSprite from "../assets/zoo.png";
+
+const RECORDS_STORAGE_KEY = "ardilla-bellota-records";
+const BEST_SCORE_STORAGE_KEY = "ardilla-bellota-best-score";
 
 export default {
   name: "GameView",
@@ -123,9 +162,12 @@ export default {
       countCells: 16,
       speed: 8,
       isPlaying: false,
+      gameOver: false,
       score: 0,
       points: 1,
+      bestScore: 0,
       scores: [],
+      squirrelSprite,
       options: [
         { text: "Fácil", value: 4 },
         { text: "Normal", value: 8 },
@@ -134,274 +176,534 @@ export default {
     };
   },
 
+  mounted() {
+    this.loadRecords();
+    // Entrar a /jugar inicia directamente una nueva partida.
+    this.start();
+  },
+
   methods: {
+    loadRecords() {
+      try {
+        const savedScores = JSON.parse(
+          localStorage.getItem(RECORDS_STORAGE_KEY) || "[]",
+        );
+
+        this.scores = Array.isArray(savedScores)
+          ? savedScores.filter((value) => Number.isFinite(value) && value >= 0)
+          : [];
+
+        const savedBest = Number(
+          localStorage.getItem(BEST_SCORE_STORAGE_KEY) || 0,
+        );
+
+        this.bestScore = Math.max(
+          0,
+          Number.isFinite(savedBest) ? savedBest : 0,
+          ...this.scores,
+        );
+      } catch {
+        this.scores = [];
+        this.bestScore = 0;
+      }
+    },
+
+    saveRecords() {
+      try {
+        localStorage.setItem(RECORDS_STORAGE_KEY, JSON.stringify(this.scores));
+        localStorage.setItem(BEST_SCORE_STORAGE_KEY, String(this.bestScore));
+      } catch {
+        // El juego sigue funcionando aunque el navegador no permita guardar.
+      }
+    },
+
     start() {
       this.score = 0;
-      this.isPlaying = true;
+      this.gameOver = false;
+      this.isPlaying = false;
+
+      // Reiniciar en el siguiente ciclo permite que SnakeCanvas
+      // observe el nuevo inicio.
+      this.$nextTick(() => {
+        this.isPlaying = true;
+      });
     },
 
     stop() {
+      if (!this.isPlaying || this.gameOver) return;
+
       this.isPlaying = false;
+      this.gameOver = true;
+
       this.scores.push(this.score);
+      this.scores.sort((a, b) => b - a);
+      this.scores = this.scores.slice(0, 10);
+
+      this.bestScore = Math.max(this.bestScore, this.score);
+      this.saveRecords();
     },
 
-    addScore(score) {
-      this.score += score;
+    addScore(points) {
+      if (this.isPlaying) {
+        this.score += points;
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+/* Aprovechar mejor la altura de la pantalla */
 .game-app {
   width: min(1200px, 100%);
+  min-height: 100vh;
   margin: 0 auto;
   padding: 12px 20px;
 }
 
 .game-header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  align-items: start;
+  gap: 18px;
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  width: fit-content;
-  padding: 8px 12px 8px 8px;
-  border-radius: 12px;
+  gap: 8px;
   color: var(--color-ink);
-  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    transform 150ms ease;
-}
-
-.back-icon {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border-radius: 10px;
-  background: #e6f6df;
-  color: #397b25;
 }
 
 .back-link:hover {
-  background: #e6f6df;
   color: #397b25;
 }
 
-.back-link:hover .back-icon {
-  background: #d6edcb;
-}
-
-.back-link:active {
-  transform: scale(0.98);
-}
-
-.back-link:focus-visible {
+.back-link:focus-visible,
+button:focus-visible,
+select:focus-visible {
   outline: 3px solid var(--color-turquoise);
   outline-offset: 3px;
 }
 
-.game-title {
-  min-width: 0;
-}
-
-.game-title .eyebrow {
-  display: block;
-  margin: 0 0 3px;
-  color: #537b40;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-}
-
-.game-title h1 {
+.game-brand {
   margin: 0;
-  font-size: clamp(20px, 2vw, 27px);
-  line-height: 1.2;
+  font-weight: 800;
 }
 
-.game-title p {
-  margin: 4px 0 0;
-  color: #667780;
-  font-size: 13px;
-}
-
-.header-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.status-pill {
-  flex-shrink: 0;
-  padding: 8px 11px;
-  border-radius: 999px;
-  background: #e6f6df;
-  color: #397b25;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.score-badge {
-  display: grid;
-  gap: 2px;
-  min-width: 88px;
-  padding: 7px 12px;
-  border-radius: 12px;
-  background: var(--color-white);
-  box-shadow: var(--shadow-card);
-}
-
-.score-badge span {
-  font-size: 11px;
-}
-
-.score-badge strong {
-  color: #4d9b32;
-  font-size: 22px;
-  line-height: 1.1;
+.game-brand span {
+  margin-right: 5px;
 }
 
 .game-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
+  grid-template-columns: minmax(0, 1fr) 250px;
   align-items: start;
-  gap: 16px;
+  gap: 18px;
 }
 
 .board-card,
 .scores-card {
   min-width: 0;
-  padding: 14px;
+  padding: 16px;
   border-radius: var(--radius-card);
   background: var(--color-white);
   box-shadow: var(--shadow-card);
 }
 
-.game-actions {
+.board-heading,
+.scores-heading {
   display: flex;
-  align-items: end;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.board-heading h1,
+.scores-heading h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.board-heading p,
+.scores-heading p {
   margin: 0;
+  color: #667780;
+  font-size: 14px;
 }
 
-.primary-button {
-  flex: 1;
-  min-width: 0;
-  min-height: 44px;
-  padding: 10px 16px;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: var(--color-forest);
-  color: #17351a;
+.eyebrow {
+  margin: 0 0 8px;
+  color: #537b40;
+  font-size: 11px;
   font-weight: 800;
-  cursor: pointer;
-  transition: transform 150ms ease;
+  letter-spacing: 1.4px;
 }
 
-.primary-button:hover {
-  transform: translateY(-1px);
+.status-pill {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff0c9;
+  color: #805b13;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.stop-button {
-  background: var(--color-coral);
-  color: white;
+.status-playing {
+  background: #e6f6df;
+  color: #397b25;
+}
+
+/* Reducir el espacio entre los elementos superiores */
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.stat-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: #f2f8ed;
+}
+
+.stat-card strong {
+  font-size: 22px;
+}
+
+.record-stat {
+  background: #fff6dc;
+}
+
+.stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stat-label span {
+  font-size: 19px;
+}
+
+.stat-card strong {
+  color: #315c38;
+  font-size: 25px;
+}
+
+.record-stat strong {
+  color: #805b13;
+}
+
+.difficulty-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .difficulty-control {
-  display: grid;
-  flex: 0 0 150px;
-  gap: 4px;
-}
-
-.difficulty-control span {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
 }
 
 .difficulty-control select {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 10px;
+  min-height: 40px;
+  padding: 7px 12px;
   border: 1px solid #d9e3d5;
   border-radius: 10px;
   background: var(--color-cream);
   color: var(--color-ink);
+  font: inherit;
 }
 
+/* Evitar que el tablero ocupe más altura de la disponible */
 .board {
+  position: relative;
   display: flex;
+  width: 100%;
+  min-width: 0;
   justify-content: center;
-  align-items: center;
-  margin: 12px 0 0;
+  box-sizing: border-box;
+  margin-top: 10px;
   padding: 8px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: #edf5e7;
 }
 
 .keyboard-hint {
-  margin: 8px 0 0;
+  margin: 16px 0 0;
   color: #667780;
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.5;
   text-align: center;
+}
+
+.scores-heading {
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.scores-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+  background: #fff0c9;
+  font-size: 23px;
+}
+
+.tip-card {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #e9f8f5;
+}
+
+.tip-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .game-footer {
-  padding: 10px 0 0;
+  padding: 24px 0 8px;
   color: #667780;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
-@media (max-width: 900px) {
-  .game-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .scores-card {
-    margin-top: 0;
-  }
+/* Pantalla de fin de partida */
+.result-overlay {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgb(28 47 32 / 70%);
+  backdrop-filter: blur(4px);
 }
 
-@media (max-width: 600px) {
+.result-card {
+  width: min(100%, 370px);
+  max-height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 2px solid #e2edda;
+  border-radius: 22px;
+  background: #fffdf6;
+  text-align: center;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 20%);
+}
+
+.sad-squirrel {
+  position: relative;
+  display: grid;
+  width: 92px;
+  height: 92px;
+  place-items: center;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #e9f5df;
+}
+
+.sad-squirrel img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: saturate(0.72);
+}
+
+.sad-tear {
+  position: absolute;
+  top: 28px;
+  right: 9px;
+  font-size: 19px;
+}
+
+.result-eyebrow {
+  margin: 4px 0 7px;
+  color: #537b40;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.result-card h2 {
+  margin: 0;
+  color: #283e4a;
+  font-size: 21px;
+}
+
+.result-description {
+  margin: 8px 0 16px;
+  color: #667780;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.result-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.result-stat {
+  display: grid;
+  gap: 7px;
+  padding: 12px 8px;
+  border-radius: 13px;
+  background: #f2f8ed;
+}
+
+.result-stat:last-child {
+  background: #fff3d6;
+}
+
+.result-stat span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.result-stat strong {
+  font-size: 24px;
+}
+
+.result-actions {
+  display: grid;
+  gap: 9px;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 15px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease;
+}
+
+.primary-button {
+  background: var(--color-forest);
+  color: #17351a;
+}
+
+.secondary-button {
+  border: 1px solid #dce7d6;
+  background: white;
+  color: var(--color-ink);
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-2px);
+}
+/* En escritorio se juega con las flechas del teclado */
+@media (min-width: 761px) {
+  .touch-controls {
+    display: none;
+  }
+
+  .snake-canvas {
+    width: auto;
+    max-width: min(480px, calc(100vh - 340px));
+    max-height: calc(100vh - 340px);
+  }
+}
+@media (max-width: 900px) {
   .game-app {
+    width: 100%;
     padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .game-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 
   .game-header {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 10px;
+    margin-bottom: 14px;
   }
 
-  .game-title {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  .board-card,
+  .scores-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 14px;
   }
 
-  .header-info {
-    justify-content: flex-end;
-    gap: 6px;
+  .board {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 8px;
   }
 
-  .score-badge {
-    min-width: 68px;
-    padding: 6px 9px;
+  .board-heading h1 {
+    font-size: 19px;
   }
 
-  .status-pill {
-    padding: 7px 8px;
-    font-size: 11px;
+  .keyboard-hint {
+    margin-top: 12px;
+  }
+
+  .scores-card {
+    padding: 18px;
+  }
+
+  .result-card {
+    padding: 18px;
+  }
+
+  .snake-canvas {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .game-app {
+    padding: 8px;
   }
 
   .board-card,
@@ -409,37 +711,46 @@ export default {
     padding: 10px;
   }
 
-  .game-actions {
-    gap: 8px;
+  .game-brand {
+    font-size: 13px;
+  }
+  .board-card {
+    padding: 10px;
+  }
+  .board-heading {
+    align-items: flex-start;
+  }
+
+  .status-pill {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .game-stats {
+    gap: 7px;
+  }
+
+  .stat-card {
+    padding: 8px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .difficulty-control {
-    flex-basis: 125px;
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .board {
-    padding: 5px;
-    margin-top: 10px;
-  }
-
-  .game-footer {
-    padding-top: 8px;
-  }
-}
-
-@media (max-width: 380px) {
-  .game-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .difficulty-control {
-    flex-basis: auto;
+  .result-card h2 {
+    font-size: 18px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .primary-button {
+  .primary-button,
+  .secondary-button {
     transition: none;
   }
 }
