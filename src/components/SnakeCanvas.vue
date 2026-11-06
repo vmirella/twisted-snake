@@ -5,7 +5,7 @@
       class="snake-canvas"
       :width="boardSizePx"
       :height="boardSizePx"
-      aria-label="Tablero de juego de Ardilla y Bellota"
+      aria-label="Tablero de juego de Squirloop"
     ></canvas>
 
     <div class="touch-controls" aria-label="Controles de movimiento">
