@@ -3,7 +3,7 @@
     <header class="home-header">
       <RouterLink to="/" class="brand">
         <span class="brand-acorn" aria-hidden="true">🌰</span>
-        <span>Ardilla y Bellota</span>
+        <span>Squirloop</span>
       </RouterLink>
 
       <span class="game-label">UNA AVENTURA PIXELADA</span>

@@ -5,9 +5,7 @@
         <span aria-hidden="true">←</span>
         <span>Inicio</span>
       </RouterLink>
-      <p class="game-brand">
-        <span aria-hidden="true">🌰</span> Ardilla y Bellota
-      </p>
+      <p class="game-brand"><span aria-hidden="true">🌰</span> Squirloop</p>
     </header>
 
     <section class="game-layout">
