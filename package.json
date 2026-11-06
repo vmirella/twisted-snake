@@ -19,7 +19,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
-    "vite": "^6.4.4"
+    "vite": "^6.4.5"
   },
   "eslintConfig": {
     "root": true,
