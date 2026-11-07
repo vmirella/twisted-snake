@@ -4,8 +4,7 @@ Juego web de la serpiente en el que una ardilla recoge bellotas en un tablero de
 
 [Jugar la demo](https://twisted-snake.vercel.app/)
 
-Agrega aquí una captura o un GIF de la partida, por ejemplo:
-![Partida en Squirloop](docs/screenshots/gameplay.png)
+![Partida en Squirloop](docs/screenshots/game-preview.gif)
 
 ## Cómo se juega
 
